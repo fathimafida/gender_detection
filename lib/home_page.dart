@@ -15,6 +15,30 @@ class _HomePageState extends State<HomePage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  void _onCheck() async {
+    if (_formKey.currentState!.validate()) {
+      String name = _nameController.text;
+      try {
+        final response =
+            await Dio().get("https://api.genderize.io/?name=" + name);
+        print(response.data);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              response.data.toString(),
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _onCheck,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 10),
